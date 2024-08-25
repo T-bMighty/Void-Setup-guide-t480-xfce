@@ -1,98 +1,157 @@
-# Void-Setup-guide-t480-xfce-intel i5
+# Void Linux Setup Guide for T480 with Xfce and Intel i5
 
-## Commands
+This guide provides step-by-step instructions to set up Void Linux with the Xfce desktop environment on an Intel-based ThinkPad T480 laptop.
 
- **xi pkgs** ...
-    — like ‘xbps-install -S’, but take cwd repo and sudo/su into account
+## Prerequisites
+- Ensure you have a working installation of Void Linux.
+- Make sure your system is connected to the internet.
 
-**xbps-install flags used**  
--S, --sync
-    Synchronize remote repository index files.
-    
--y, --yes
-    Assume yes to all questions and avoid interactive questions.
-    
--u, --update
-    Performs a full system upgrade: all installed packages (except those on hold, see --mode hold in xbps-pkgdb(1)) will be updated to the greatest versions that were found in repositories.
-    
--v, --verbose
-    Enables verbose messages.
+## Commands Overview
 
-**Update System**
+The following commands are used throughout this setup guide:
 
+### xi
+This command is similar to `xbps-install -S`, but it takes into account the current directory and sudo/su considerations. Usage example:
+```bash
+xi package-name
+```
+
+### xbps-install Flags
+- `-S` or `--sync`: Synchronize remote repository index files.
+- `-y` or `--yes`: Assume yes to all questions and avoid interactive questions.
+- `-u` or `--update`: Update all installed packages.
+- `-v` or `--verbose`: Enable verbose messages.
+
+## System Preparation
+
+```bash
 sudo xbps-install -Syuv
-
+```
+```bash
 xcheckrestart
+```
 
-**install repos**
-
+### Install additional repositories and essential packages
+```bash
 xi void-repo-debug void-repo-multilib void-repo-multilib-nonfree void-repo-nonfree nano
-
 sudo xbps-install -Syuv
-
 xcheckrestart
+```
 
-**Configure intel graphics**
+## Graphics Configuration
 
-xi linux-firmware-intel mesa-dri vulkan-loader mesa-vulkan-intel intel-video-accel
+1. **Configure Intel graphics**:
+    ```bash
+    xi linux-firmware-intel mesa-dri vulkan-loader mesa-vulkan-intel intel-video-accel
+    ```
+    - Set the `LIBVA_DRIVER_NAME` environment variable to `i965`.
+        ```bash
+        export LIBVA_DRIVER_NAME=i965
+        ```
 
-LIBVA_DRIVER_NAME=i965
+2. **Edit GRUB**:
+    - Add `intel_iommu=igfx_off` to your kernel command line:
+        ```bash
+        sudo nano /etc/default/grub
+        ```
+    - Update GRUB after making changes:
+        ```bash
+        sudo update-grub
+        ```
 
-sudo nano /etc/default/grub
+## Firmware and Additional Software
 
-Add`intel_iommu=igfx_off` to your [kernel cmdline](https://docs.voidlinux.org/config/kernel.html#cmdline).
+1. **Install Intel microcode**:
+    ```bash
+    xi intel-ucode
+    sudo xbps-reconfigure --force intel-ucode
+    ```
 
-sudo update-grub
+2. **Add Flatpak support**:
+    ```bash
+    xi flatpak
+    flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+    ```
 
-**Intel-firmware**
+3. **Enable Bluetooth**:
+    - Install necessary packages:
+        ```bash
+        xi bluez libspa-bluetooth dbus
+        ```
+    - Enable the `dbus` and `bluetoothd` services:
+        ```bash
+        sudo ln -s /etc/sv/dbus /var/service
+        sudo ln -s /etc/sv/bluetoothd /var/service
+        ```
+    - Restart your computer:
+        ```bash
+        sudo reboot
+        ```
 
-xi intel-ucode
+4. **Install additional software**:
+    ```bash
+    xi blueman rofi kitty
+    ```
 
-sudo xbps-reconfigure --force intel-ucode
+5. **Configure Rofi shortcut** (optional):
+    Bind `rofi -show drun` to a keyboard shortcut for easier access.
 
-**Add Flatpak**
+6. **Manage Bluetooth devices**:
+    ```bash
+    blueman-manager
+    ```
 
-xi flatpak
+## Network Configuration
 
-flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-
-**Enable Bluetooth**
-
-xi bluez libspa-bluetooth dbus
-
-sudo ln -s /etc/sv/dbus /var/service
-
-sudo ln -s /etc/sv/bluetoothd /var/service
-
+1. **Install and configure network services**:
+    ```bash
+    xi ufw wireguard xi NetworkManager-pptp NetworkManager-l2tp NetworkManager-devel NetworkManager-l2tp NetworkManager-openvpn dnscrypt-proxy
+    ```
+   
+2. **Configure UFW** (optional):
+    - Open the UFW configuration file:
+        ```bash
+        sudo nano /etc/default/ufw
+        ```
+    - Disable and re-enable UFW to apply changes:
+        ```bash
+        sudo ufw disable
+        sudo ufw enable
+        ```
+3.**Enable Dnscrypt-proxy**
+'''bash
+sudo ln -s /etc/sv/dnscrypt_proxy /var/service
+'''
+4.**Final reboot**
+'''bash
 sudo reboot
+'''
 
-xi blueman rofi kitty
-#To use rofi bind 'rofi -show drun' to a keyboard shortcut
+## Optional: Mount a Drive
 
-blueman-manager
+1. **Mount a drive** (if applicable):
+    - List block devices:
+        ```bash
+        lsblk
+        ```
+    - Create a mount point:
+        ```bash
+        sudo mkdir /data
+        sudo chown -R $USER:$USER /data
+        ```
+    - Add your device to `/etc/fstab` for automatic mounting:
+        ```bash
+        sudo nano /etc/fstab
+        ```
+    - Mount the drive manually:
+        ```bash
+        sudo mount -a
+        ```
 
-## For me(optional)
-**Mount a drive**
+## Flatpaks
 
-lsblk
-
-sudo mkdir /data
-
-sudo chown -R $USER:$USER /data
-
-sudo nano /etc/fstab
-
-/dev/(lsblk output) /data    ext4    defaults        0       0
-
-sudo mount -a
-
-**Final**
-
-flatpak install freetube bitwarden librewolf
-
-FORCE_IPV4 #only use ipv4
-
-sudo ufw enable
-
-
+1. **Install final applications**:
+    ```bash
+    flatpak install freetube bitwarden librewolf
+    ```
 
