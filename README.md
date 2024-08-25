@@ -118,14 +118,16 @@ xcheckrestart
         sudo ufw disable
         sudo ufw enable
         ```
-3.**Enable Dnscrypt-proxy**
-'''bash
-sudo ln -s /etc/sv/dnscrypt_proxy /var/service
-'''
-4.**Final reboot**
-'''bash
-sudo reboot
-'''
+        
+    3.**Enable Dnscrypt-proxy**:
+     ```bash
+    sudo ln -s /etc/sv/dnscrypt_proxy /var/service
+    ```
+
+    4.**Final reboot**:
+     ```bash
+    sudo reboot
+    ```
 
 ## Optional: Mount a Drive
 
