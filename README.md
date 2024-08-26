@@ -113,6 +113,7 @@ xcheckrestart
         ```bash
         sudo nano /etc/default/ufw
         ```
+        - IPv6=no
     - Disable and re-enable UFW to apply changes:
         ```bash
         sudo ufw disable
