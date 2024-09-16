@@ -24,18 +24,13 @@ xi package-name
 
 ## System Preparation
 
-```bash
-sudo xbps-install -Syuv
-```
-```bash
-xcheckrestart
-```
 
 ### Install additional repositories and essential packages
 ```bash
 xi void-repo-debug void-repo-multilib void-repo-multilib-nonfree void-repo-nonfree nano
 sudo xbps-install -Syuv
 xcheckrestart
+sudo reboot
 ```
 
 ## Graphics Configuration
