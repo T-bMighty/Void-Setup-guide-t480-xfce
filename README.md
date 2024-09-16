@@ -64,7 +64,7 @@ xcheckrestart
 1. **Install Intel microcode**:
     ```bash
     xi intel-ucode
-    sudo xbps-reconfigure --force intel-ucode
+    sudo xbps-reconfigure --force example "linux-6.6.51_1"
     ```
 
 2. **Add Flatpak support**:
@@ -105,7 +105,7 @@ xcheckrestart
 
 1. **Install and configure network services**:
     ```bash
-    xi ufw wireguard xi NetworkManager-pptp NetworkManager-l2tp NetworkManager-devel NetworkManager-l2tp NetworkManager-openvpn dnscrypt-proxy
+    xi ufw wireguard NetworkManager-pptp NetworkManager-l2tp NetworkManager-devel NetworkManager-l2tp NetworkManager-openvpn dnscrypt-proxy
     ```
    
 2. **Configure UFW** (optional):
